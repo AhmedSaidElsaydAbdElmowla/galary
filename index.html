@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>نموذج التحقق</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<?php
+// تعريف المتغيرات وأخطاء التحقق
+$name = $email = $password = "";
+$nameErr = $emailErr = $passwordErr = "";
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // التحقق من الاسم
+    if (empty($_POST["name"])) {
+        $nameErr = "الاسم مطلوب";
+    } else {
+        $name = htmlspecialchars($_POST["name"]);
+        if (!preg_match("/^[a-zA-Z-' ]*$/", $name)) {
+            $nameErr = "الاسم يجب أن يحتوي على أحرف ومسافات فقط";
+        }
+    }
+
+    // التحقق من البريد الإلكتروني
+    if (empty($_POST["email"])) {
+        $emailErr = "البريد الإلكتروني مطلوب";
+    } else {
+        $email = htmlspecialchars($_POST["email"]);
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $emailErr = "صيغة البريد الإلكتروني غير صحيحة";
+        }
+    }
+
+    // التحقق من كلمة المرور
+    if (empty($_POST["password"])) {
+        $passwordErr = "كلمة المرور مطلوبة";
+    } else {
+        $password = htmlspecialchars($_POST["password"]);
+        if (strlen($password) < 6) {
+            $passwordErr = "كلمة المرور يجب أن تكون 6 أحرف على الأقل";
+        }
+    }
+}
+?>
+
+<div class="form-container">
+    <h2>تسجيل الدخول</h2>
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+        <label>الاسم</label>
+        <input type="text" name="name" value="<?php echo $name; ?>">
+        <span class="error"><?php echo $nameErr;?></span>
+
+        <label>البريد الإلكتروني</label>
+        <input type="text" name="email" value="<?php echo $email; ?>">
+        <span class="error"><?php echo $emailErr;?></span>
+
+        <label>كلمة المرور</label>
+        <input type="password" name="password">
+        <span class="error"><?php echo $passwordErr;?></span>
+
+        <button type="submit">إرسال</button>
+    </form>
+</div>
+
+</body>
+</html>
